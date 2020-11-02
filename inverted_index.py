@@ -38,6 +38,7 @@ def preprocess_text(text):
     tokens = [token.lower() for token in tokens]  # Convert all tokens to lowercase
     return tokens
 
+"""Creates the inverted index"""
 def create_inverted_index(document_frequencies, idnos):
     inverted_index ={}
     assert len(document_frequencies) == len(idnos), "Lengths don't match!"
@@ -54,6 +55,7 @@ def create_inverted_index(document_frequencies, idnos):
 if __name__ == '__main__':
     titles, idnos, document_bodies = [],[],[]
     count = 0
+    # Iterate over all files and extract document
     for subdir, dirs, files in os.walk(ROOT_DIR):
         for file in files:
             count = count+1
@@ -62,12 +64,20 @@ if __name__ == '__main__':
             titles = titles + file_titles
             idnos = idnos + file_idnos
             document_bodies = document_bodies + file_document_bodies
+    
+    # Tokenize all the documents
     document_token_list = []
     for document in document_bodies:
         tokens = preprocess_text(document)
         document_token_list.append(tokens)
+
+    # Find document frequencies
     document_frequencies = [Counter(token_list) for token_list in document_token_list]
+
+    # Create inverted index
     inverted_index = create_inverted_index(document_frequencies, idnos)
+
+    # Store since it takes a long time to build
     with open('data/document_bodies.data','wb') as f:
         pickle.dump(document_bodies,f)
     with open('data/titles.data','wb') as f:
