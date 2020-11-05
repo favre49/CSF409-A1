@@ -7,7 +7,8 @@ import os
 
 nltk.download('punkt')
 
-ROOT_DIR = "./data/Wikipedia/AO"
+ROOT_DIR = "./data/Wikipedia/AO" # Root directory for input files
+INDEX_DATA_DIR = "./index_data" 
 
 """Retrieves documents from a given file
 
@@ -41,9 +42,8 @@ def preprocess_text(text):
 """Creates the inverted index"""
 def create_inverted_index(document_frequencies, idnos):
     inverted_index ={}
-    assert len(document_frequencies) == len(idnos), "Lengths don't match!"
     for document_frequency, idno in zip(document_frequencies,idnos):
-        for key in inverted_index.keys():
+        for key in document_frequency.keys():
             if key in inverted_index.keys():
                 inverted_index[key].append((idno,document_frequency[key]))
             else:
@@ -51,8 +51,7 @@ def create_inverted_index(document_frequencies, idnos):
                 inverted_index[key].append((idno,document_frequency[key]))
     return inverted_index
 
-# Testing
-if __name__ == '__main__':
+def generate_inverted_index() :
     titles, idnos, document_bodies = [],[],[]
     count = 0
     # Iterate over all files and extract document
@@ -78,11 +77,13 @@ if __name__ == '__main__':
     inverted_index = create_inverted_index(document_frequencies, idnos)
 
     # Store since it takes a long time to build
-    with open('data/document_bodies.data','wb') as f:
-        pickle.dump(document_bodies,f)
-    with open('data/titles.data','wb') as f:
+    with open('index_data/titles.data','wb') as f:
         pickle.dump(titles,f)
-    with open('data/document_token_list.data','wb') as f:
-        pickle.dump(document_token_list,f)
-    with open('data/inverted_index.data','wb') as f:
+    with open('index_data/idnos.data','wb') as f:
+        pickle.dump(idnos,f)
+    with open('index_data/document_frequencies.data','wb') as f:
+        pickle.dump(document_frequencies,f)
+    with open('index_data/document_bodies.data','wb') as f:
+        pickle.dump(document_bodies,f)
+    with open('index_data/inverted_index.data','wb') as f:
         pickle.dump(inverted_index,f)
