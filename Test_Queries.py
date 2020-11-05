@@ -1,5 +1,5 @@
 from search import *
-from search_part1 import read_data_structures_1
+from search import read_data_structures_1
 
 
 def test_queries():
