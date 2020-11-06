@@ -4,6 +4,6 @@ from search import read_data_structures_1
 
 def test_queries():
 
-    read_data_structures_1(location = "Data_Stored")
+    read_data_structures_1(location = "index_data")
 
      search()
