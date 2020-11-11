@@ -8,7 +8,7 @@ import os
 nltk.download('punkt')
 
 ROOT_DIR = "./data/Wikipedia/AO" # Root directory for input files
-INDEX_DATA_DIR = "./index_data" 
+INDEX_DATA_DIR = "./index_data"
 
 """Retrieves documents from a given file
 
@@ -63,7 +63,7 @@ def generate_inverted_index() :
             titles = titles + file_titles
             idnos = idnos + file_idnos
             document_bodies = document_bodies + file_document_bodies
-    
+
     # Tokenize all the documents
     document_token_list = []
     for document in document_bodies:
@@ -81,6 +81,8 @@ def generate_inverted_index() :
         pickle.dump(titles,f)
     with open('index_data/idnos.data','wb') as f:
         pickle.dump(idnos,f)
+    with open('index_data/document_token_list.data','wb') as f:
+        pickle.dump(document_token_list,f)
     with open('index_data/document_frequencies.data','wb') as f:
         pickle.dump(document_frequencies,f)
     with open('index_data/document_bodies.data','wb') as f:

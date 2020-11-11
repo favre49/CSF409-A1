@@ -3,7 +3,7 @@ import math
 from nltk import word_tokenize
 from inverted_index import *
 
-def query_pre_process(query): #pre-process the query the same way documents are pre-processed
+def pre_process_query(query): #pre-process the query the same way documents are pre-processed
     new_query = word_tokenize(query)
     new_query = [w for w in new_query if w.isalnum()]
     new_query = [x.lower() for x in new_query]
@@ -19,6 +19,7 @@ def read_data_structures_1():
     global idnos
     global document_frequencies
     global document_bodies
+    global document_token_list
     global inverted_index
 
     with open( 'index_data/titles.data', 'rb') as f:
@@ -31,6 +32,8 @@ def read_data_structures_1():
         document_bodies = pickle.load(f)
     with open( 'index_data/document_frequencies.data', 'rb') as f:
         document_frequencies = pickle.load(f)
+    with open( 'index_data/document_token_list.data', 'rb') as f:
+        document_token_list = pickle.load(f)
 
 # Return all the query terms with the corresponding count
 def get_query_terms(query):
@@ -117,7 +120,7 @@ def compute_scores(query_wt, document_wt):
 def search():
     query = input('Enter your query: ')
     # Pre-process the query
-    query_processed = query_pre_process(query)
+    processed_query = pre_process_query(query)
     query_terms = get_query_terms(query_processed)
     print("Query Terms: ", query_terms)
 
@@ -135,5 +138,6 @@ def search():
     for i in range(10):
         if i == len(titles):
             break
-        print(str(i) + ". Document: " + str(scores[i][0]) + ". " + str(titles[scores[i][0]]) + ", Score: " + str(
-            round(scores[i][1], 3))) 
+        print(str(i) + ". Document " + str(idnos[scores[i][0]]) + ": " + str(titles[scores[i][0]]) + ", Score: " + str(
+            round(scores[i][1], 3)))
+        print(document_bodies[scores[i][0]])
