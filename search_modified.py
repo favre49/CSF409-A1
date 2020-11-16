@@ -11,7 +11,7 @@ nltk.download('wordnet')
 # A Spelling correction heuristic has been added during the preprocessing of queries
 # For further improvement in results, the modified retrieval system also searches for words having similar meaning to the query term
 
-def read_data_structures_1():
+def get_data_structures():
     global titles
     global idnos
     global document_frequencies
@@ -32,23 +32,21 @@ def read_data_structures_1():
 
 def spelling_corrector(query):
     spelling = SpellChecker()
-    misspelt = spelling.unknown(query.split())
+    misspelt = spelling.unknown(query)
     print("Executing Spelling Check ...")
     if misspelt:
-        for w in query.split():
+        for w in query:
             if w in misspelt:
-                print("Did you mean " + spelling.correction(w) + " instead of " + w " ? Press y for Yes: ")
+                print("Did you mean " + spelling.correction(w) + " instead of " + w + " ? Press y for Yes: ")
                 choice = input()
                 if choice == 'y':
-                    query = query.replace(w, spelling.correction(w))
-                    exit(0)
+                    query[:] = [spelling.correction(w) if x == w else x for x in query]
     return query
 
 
 # This function finds the relevant synonyms of the terms in the query
 
 def compute_synonyms(query_tokens):
-
     synonym_set = []
     for word in query_tokens:
         s = [word]

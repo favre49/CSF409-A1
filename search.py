@@ -14,7 +14,7 @@ def pre_process_query(query): #pre-process the query the same way documents are 
 
 # Reads all the data related to inverted index and necessary for computation
 # location: name of folder where data is stored
-def read_data_structures_1():
+def read_data_structures():
     global titles
     global idnos
     global document_frequencies
