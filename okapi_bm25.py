@@ -1,4 +1,21 @@
 from search import *
+from search_modified import *
+import search
+
+def get_data_structures_OkapiBM25():
+    global titles
+    global idnos
+    global document_frequencies
+    global document_bodies
+    global document_token_list
+    global inverted_index
+
+    titles = search.titles
+    idnos = search.idnos
+    document_frequencies = search.document_frequencies 
+    document_bodies = search.document_bodies
+    document_token_list = search.document_token_list
+    inverted_index = search.inverted_index
 
 def query_OkapiBM25(query_terms,k,b):
     N = len(document_bodies)
@@ -21,10 +38,11 @@ def query_OkapiBM25(query_terms,k,b):
     return doc_scores
 
 
-def search_Okapi_BM25():
+def search_OkapiBM25():
     query = input('Please enter your query: ')
     processed_query = pre_process_query(query)
-    query_terms = get_query_terms(query_processed)
+    spell_corrected_query = spelling_corrector(processed_query)
+    query_terms = get_query_terms(spell_corrected_query)
     print("Query Terms: ", query_terms)
 
     # Okapi BM25 hyperparameters
