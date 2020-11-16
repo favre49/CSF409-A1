@@ -17,7 +17,7 @@ def get_data_structures_OkapiBM25():
     document_token_list = search.document_token_list
     inverted_index = search.inverted_index
 
-def query_OkapiBM25(query_terms,k,b):
+def query_OkapiBM25(query_terms,k,b,delta):
     N = len(document_bodies)
     avg_length = sum([len(doc) for doc in document_token_list])
     avg_length /= N
@@ -29,9 +29,11 @@ def query_OkapiBM25(query_terms,k,b):
             if term in freq_dict:
                 df = len(inverted_index[term])
                 tf = freq_dict[term]
-                term_score = math.log10(N/df)*(k+1)*tf
+                term_score = (k+1)*tf
                 document_length = len(document_token_list[i])
                 term_score /= k*((1-b)+b*document_length/avg_length)+tf
+                term_score += delta
+                term_score *= math.log10(N+1/df)
                 score += term_score
         doc_scores[i] = [i,score]
     doc_scores = sorted(doc_scores, key = lambda x : x[1], reverse=True) 
@@ -45,10 +47,11 @@ def search_OkapiBM25():
     query_terms = get_query_terms(spell_corrected_query)
     print("Query Terms: ", query_terms)
 
-    # Okapi BM25 hyperparameters
+    # Okapi BM25+ hyperparameters
     k = 0.5
     b = 0.5
-    scores = query_OkapiBM25(query_terms,k,b)
+    delta = 1
+    scores = query_OkapiBM25(query_terms,k,b,delta)
     
     # Checking if number of results is less than 10
     num = len(titles) if len(titles)<10 else 10
