@@ -3,17 +3,18 @@ import math
 from nltk import word_tokenize
 from inverted_index import *
 
-def pre_process_query(query): #pre-process the query the same way documents are pre-processed
+""" Pre-process the query the same way documents are processed
+"""
+def pre_process_query(query):
     new_query = word_tokenize(query)
     new_query = [w for w in new_query if w.isalnum()]
     new_query = [x.lower() for x in new_query]
-    # new_query = [w for w in new_query if not (w == "''" or w == '' or w == "' '")]
     return new_query
 
-# Implementation of query retrieval system that uses lnc-ltc scoring scheme
+""" Implementation of query retrieval system that uses lnc-ltc scoring scheme
 
-# Reads all the data related to inverted index and necessary for computation
-# location: name of folder where data is stored
+Reads all the data related to inverted index and necessary for computation
+"""
 def read_data_structures():
     global titles
     global idnos
@@ -35,15 +36,18 @@ def read_data_structures():
     with open( 'index_data/document_token_list.data', 'rb') as f:
         document_token_list = pickle.load(f)
 
-# Return all the query terms with the corresponding count
+""" Return all the query terms with the corresponding count
+"""
 def get_query_terms(query):
     return Counter(query)
 
-# Generated normalized query scores
-# Scoring scheme: ltc
-# l -> Logarithmic tf
-# t -> idf
-# c -> Cosine normalization
+""" Generate normalized query scores
+
+The scoring scheme is ltc
+l -> Logarithmic tf
+t -> idf
+c -> Cosine normalization
+"""
 def get_normalized_query_scores(query_terms):
     # Calculate logarithmic tf
     tf = {}
@@ -66,12 +70,13 @@ def get_normalized_query_scores(query_terms):
         tf_idf[term] = tf_idf[term] * cosine    #cosine- normalize the tf_idf scores for each term in the query
     return tf_idf               #returns a dict of terms vs tf_idf scores
 
+""" Generate normalized document scores
 
-# Generate normalize document scores
-# Scoring scheme: lnc
-# l -> Logarithmic tf
-# n -> No idf
-# c -> Cosine normalization
+Scoring scheme: lnc
+l -> Logarithmic tf
+n -> No idf
+c -> Cosine normalization
+"""
 def get_normalized_doc_weights(query):
     doc_weights = [[] for i in range(len(document_frequencies))] #list of as many lists as the number of documents
     # Finding logarithmic tf
@@ -92,18 +97,22 @@ def get_normalized_doc_weights(query):
             normalized_doc_weights[i].append([doc_tf[j][0], doc_tf[j][1] * factor])
     return normalized_doc_weights   #returns a list of [doc_terms, number of occurrences of the term in document]
 
-# Function that returns the weight of a given term in query
-# Returns 0 if term not in query
+""" Function that returns the weight of a given term in query
+
+Returns 0 if term not in query
+"""
 def get_query_term_weight(term, term_weights):
     if term in term_weights.keys():
         return term_weights[term]
     else:
         return 0
 
-# Computes the cosine similarity between query and document weights
-# Returns a sorted list of documents with their scores in non-increasing order
+""" Computes the cosine similarity between query and document weights
+
+Returns a sorted list of documents with their scores in non-increasing order
+"""
 def compute_scores(query_wt, document_wt):
-    scores = [[i, 0] for i in range(len(document_wt))]  #list of2 element lists [rank, score]
+    scores = [[i, 0] for i in range(len(document_wt))]  #list of [rank, score] pairs
     for i in range(len(document_wt)):
         doc_tf = document_wt[i]                         #list of term - frequency pairs for one document
         score = 0
@@ -115,13 +124,16 @@ def compute_scores(query_wt, document_wt):
     scores = sorted(scores, key=lambda x: x[1], reverse=True)
     return scores
 
+""" Performs search
 
-# Function accepts user query, and ranks documents based on cosine similarity, then prints the top 10 results based on the rank
+Accepts user query, and ranks documents based on cosine similarity, then prints
+the top 10 results based on the rank
+"""
 def search():
     query = input('Enter your query: ')
     # Pre-process the query
     processed_query = pre_process_query(query)
-    query_terms = get_query_terms(query_processed)
+    query_terms = get_query_terms(processed_query)
     print("Query Terms: ", query_terms)
 
     # Find query and docuemnt weights
@@ -138,6 +150,4 @@ def search():
     for i in range(10):
         if i == len(titles):
             break
-        print(str(i) + ". Document " + str(idnos[scores[i][0]]) + ": " + str(titles[scores[i][0]]) + ", Score: " + str(
-            round(scores[i][1], 3)))
-        print(document_bodies[scores[i][0]])
+        print(str(i) + ". Document " + str(idnos[scores[i][0]]) + ": " + str(titles[scores[i][0]]) + ", Score: " + str(round(scores[i][1], 3)))

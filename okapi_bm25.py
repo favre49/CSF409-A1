@@ -2,6 +2,8 @@ from search import *
 from search_modified import *
 import search
 
+""" Reads serialized data for searching
+"""
 def get_data_structures_OkapiBM25():
     global titles
     global idnos
@@ -17,6 +19,11 @@ def get_data_structures_OkapiBM25():
     document_token_list = search.document_token_list
     inverted_index = search.inverted_index
 
+""" Performs a query with the OkapiBM25+ algorithm
+
+The hyperparameters of the equation k,b and delta re passed as function
+arguments.
+"""
 def query_OkapiBM25(query_terms,k,b,delta):
     N = len(document_bodies)
     avg_length = sum([len(doc) for doc in document_token_list])
@@ -39,11 +46,12 @@ def query_OkapiBM25(query_terms,k,b,delta):
     doc_scores = sorted(doc_scores, key = lambda x : x[1], reverse=True) 
     return doc_scores
 
-
+""" Performs a search with the Okapi BM25+ algorithm
+"""
 def search_OkapiBM25():
     query = input('Please enter your query: ')
     processed_query = pre_process_query(query)
-    spell_corrected_query = spelling_corrector(processed_query)
+    spell_corrected_query = spelling_corrector(processed_query) # Spell correct query
     query_terms = get_query_terms(spell_corrected_query)
     print("Query Terms: ", query_terms)
 
@@ -60,6 +68,4 @@ def search_OkapiBM25():
     for i in range(10):
         if i == len(titles):
             break
-        print(str(i) + ". Document " + str(idnos[scores[i][0]]) + ": " + str(titles[scores[i][0]]) + ", Score: " + str(
-            round(scores[i][1], 3)))
-        print(document_bodies[scores[i][0]])
+        print(str(i) + ". Document " + str(idnos[scores[i][0]]) + ": " + str(titles[scores[i][0]]) + ", Score: " + str(round(scores[i][1], 3)))

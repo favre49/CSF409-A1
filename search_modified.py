@@ -6,10 +6,12 @@ from nltk.stem import PorterStemmer
 from nltk.corpus import wordnet
 nltk.download('wordnet')
 
-# This file improves the previously implemented information retrieval system which was based on the lnc-ltc scoring scheme
-# Modifications have been made in searching and preprocessing of the queries
-# A Spelling correction heuristic has been added during the preprocessing of queries
-# For further improvement in results, the modified retrieval system also searches for words having similar meaning to the query term
+"""
+This file improves the previously implemented information retrieval system which was based on the lnc-ltc scoring scheme
+Modifications have been made in searching and preprocessing of the queries
+A Spelling correction heuristic has been added during the preprocessing of queries
+For further improvement in results, the modified retrieval system also searches for words having similar meaning to the query term
+"""
 
 def get_data_structures():
     global titles
@@ -21,15 +23,17 @@ def get_data_structures():
 
     titles = search.titles
     idnos = search.idnos
-    document_frequencies = search.document_frequencies 
+    document_frequencies = search.document_frequencies
     document_bodies = search.document_bodies
     document_token_list = search.document_token_list
     inverted_index = search.inverted_index
 
 
-# This function implements a heuristic for checking the spelling of query terms.
-# Every query term is spell checked and if a term has been misspelt then the user is asked when the user wants to search for the corrected query term instead
+"""Implements a heuristic for checking the spelling of query terms.
 
+Every query term is spell checked and if a term has been misspelt then the
+user is asked when the user wants to search for the corrected query term instead
+"""
 def spelling_corrector(query):
     spelling = SpellChecker()
     misspelt = spelling.unknown(query)
@@ -44,8 +48,8 @@ def spelling_corrector(query):
     return query
 
 
-# This function finds the relevant synonyms of the terms in the query
-
+"""This function finds the relevant synonyms of the terms in the query
+"""
 def compute_synonyms(query_tokens):
     synonym_set = []
     for word in query_tokens:
@@ -56,10 +60,10 @@ def compute_synonyms(query_tokens):
         synonym_set.append(list(set(s)))
     return synonym_set
 
+""" Computes the cosine similarity between query and document weights
 
-# This function computes the cosine similarity between query and document weights
-# An unsorted list of the scores of the scores is being returned this time
-
+An unsorted list of the scores of the scores is being returned this time
+"""
 def compute_scores(query_wt, document_wt):
     scores = [[i, 0] for i in range(len(document_wt))]              #list of 2-element lists [rank, score]
     for i in range(len(document_wt)):
@@ -74,8 +78,8 @@ def compute_scores(query_wt, document_wt):
     return scores
 
 
-# This function merges existing scores with the newly computed scores of the synonym set of a term
-
+""" Merges existing scores with the newly computed scores of the synonym set of a term
+"""
 def compute_merged_scores(cscores, wt1, wt2):
 
     # Here w1 = weight associated with score of original query terms and w2 = weight associated with score of all the synonyms of original term
@@ -92,11 +96,11 @@ def compute_merged_scores(cscores, wt1, wt2):
         return new_scores
 
 
-# This function implements the modified search in the improved info retrieval system
-# User query is accepted and documents are ranked on the basis of cosine similarity after which the top 10 results are printed
+""" Implements the modified search in the improved info retrieval system
 
+User query is accepted and documents are ranked on the basis of cosine similarity after which the top 10 results are printed
+"""
 def modified_search():
-
     query = input('Enter query: ')
 
     # Pre-processing the query
@@ -125,9 +129,7 @@ def modified_search():
         new_query_terms = Counter(qs)
         new_q_wt = get_normalized_query_scores(new_query_terms)
         new_d_wt = get_normalized_doc_weights(new_query_terms)
-
         # Note: The weight of the scores of the synonym sets can be changed. Currently, the weight has been set to 0.2 after repeated evaluation of performance.
-
         new_score = compute_scores(new_q_wt, new_d_wt)
         scores.append(new_score)
 
@@ -145,4 +147,3 @@ def modified_search():
         if i == len(titles):
             break
         print(str(i) + ". Document " + str(idnos[final_scores[i][0]]) + ": " + str(titles[final_scores[i][0]]) + ", Score: " + str(round(final_scores[i][1], 3)))
-        print(document_bodies[final_scores[i][0]])
