@@ -58,8 +58,8 @@ def search_OkapiBM25():
     print("Query Terms: ", query_terms)
 
     # Okapi BM25+ hyperparameters
-    k = 0.5
-    b = 0.5
+    k = 1.2
+    b = 0.75
     delta = 1
     scores = query_OkapiBM25(query_terms,k,b,delta)
     
