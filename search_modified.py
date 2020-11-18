@@ -62,24 +62,6 @@ def compute_synonyms(query_tokens):
         synonym_set.append(list(set(s)))
     return synonym_set
 
-""" Computes the cosine similarity between query and document weights
-
-An unsorted list of the scores of the scores is being returned this time
-"""
-def compute_scores(query_wt, document_wt):
-    scores = [[i, 0] for i in range(len(document_wt))]              #list of 2-element lists [rank, score]
-    for i in range(len(document_wt)):
-        doc_tf = document_wt[i]                                     #list of term-frequency pairs for one document
-        score = 0
-        for j in range(len(doc_tf)):                                #looping through the total number of terms of the document
-            term = doc_tf[j][0]
-            term_weight = get_query_term_weight(term, query_wt)     #getting the query term weight corresponding to each term in the document.
-            score += term_weight * doc_tf[j][1]                     #adding product of query and doc weights of the term to the score
-        scores[i] = [i, score]                                      #a pair with of an index vs score
-    
-    return scores
-
-
 """ Merges existing scores with the newly computed scores of the synonym set of a term
 """
 def compute_merged_scores(cscores, wt1, wt2):

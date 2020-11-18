@@ -74,7 +74,7 @@ def get_normalized_query_scores(query_terms):
 
 Returns 0 if term not in query
 """
-def get_query_term_weight(term, term_weights):
+def get_document_term_weight(term, term_weights):
     if term in term_weights.keys():
         return term_weights[term]
     else:
@@ -89,10 +89,9 @@ def compute_scores(query_wt, document_wt):
     for i in range(len(document_wt)):
         doc_tf = document_wt[i]                         #list of term - frequency pairs for one document
         score = 0
-        for j in range(len(doc_tf)):                    #looping through the total number of terms of the document
-            score += get_query_term_weight(doc_tf[j][0],query_wt) * doc_tf[j][1]         #adds product of query and doc weights of the term to the score
+        for term in query_wt.keys():
+            score += query_wt[term]*get_document_term_weight(term,doc_tf)
         scores[i] = [i, score]                          #a pair with of an index vs score
-    scores = sorted(scores, key=lambda x: x[1], reverse=True)
     return scores
 
 """ Performs search
@@ -110,8 +109,9 @@ def search():
     # Find query and docuemnt weights
     query_wt = get_normalized_query_scores(query_terms)
 
-    # Find the ranking
+    # Find the scores of each document
     scores = compute_scores(query_wt, document_weights)
+    scores = sorted(scores, key=lambda x: x[1], reverse=True)
 
     # Checking if number of results is less than 10
     num = len(titles) if len(titles)<10 else 10

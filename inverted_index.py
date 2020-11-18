@@ -67,24 +67,23 @@ n -> No idf
 c -> Cosine normalization
 """
 def get_normalized_doc_weights(document_frequencies):
-    doc_weights = [[] for i in range(len(document_frequencies))] #list of as many lists as the number of documents
+    doc_weights = [{} for i in range(len(document_frequencies))] #list of as many lists as the number of documents
     # Finding logarithmic tf
     for i in range(len(document_frequencies)):
         for term in document_frequencies[i].keys():
             val = document_frequencies[i][term]
-            doc_weights[i].append([term, 1 + math.log10(val)])
+            doc_weights[i][term] = 1 + math.log10(val)
     # Applying cosine normalization
-    normalized_doc_weights = [[] for i in range(len(doc_weights))]
     for i in range(len(doc_weights)):
         doc_tf = doc_weights[i]
-        square_sum = math.sqrt(sum([v[1] ** 2 for v in doc_tf]))
+        square_sum = math.sqrt(sum([v ** 2 for v in doc_tf.values()]))
         if square_sum != 0:
             factor = 1 / square_sum
         else:
             factor = 0
-        for j in range(len(doc_tf)):
-            normalized_doc_weights[i].append([doc_tf[j][0], doc_tf[j][1] * factor])
-    return normalized_doc_weights
+        for term in doc_weights[i].keys():
+            doc_weights[i][term] *= factor
+    return doc_weights
 
 """ Serializes the inverted index and associated data
 
@@ -121,10 +120,8 @@ def generate_inverted_index() :
     # Create inverted index
     inverted_index = create_inverted_index(document_frequencies, idnos)
     
-    print("Creating document weights")
     # Precompute documetn weights for later use
     document_weights = get_normalized_doc_weights(document_frequencies)
-    print("Created document weights")
 
     # Store since it takes a long time to build
     with open('index_data/titles.data','wb') as f:
