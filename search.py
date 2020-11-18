@@ -50,19 +50,16 @@ c -> Cosine normalization
 """
 def get_normalized_query_scores(query_terms):
     # Calculate logarithmic tf
-    tf = {}
-    idf = {}
     tf_idf = {}
     N = len(document_frequencies)
     for term in query_terms:
-        tf[term] = 1 + math.log10(query_terms[term])
-    for term in query_terms:
+        tf = 1 + math.log10(query_terms[term]) # Assign TF
+        idf = 0
         if term in inverted_index.keys():
-            idf[term] = math.log10(N / len(inverted_index[term]))
+            idf = math.log10(N / len(inverted_index[term]))
         else:
-            idf[term] = 0
-    for term in query_terms:    #find tf_idf scores for each term in the query
-        tf_idf[term] = tf[term]*idf[term]
+            idf = 0
+        tf_idf[term] = tf*idf # Find TF-IDF for each term
     cosine = math.sqrt(sum([x**2 for x in tf_idf.values()]))
     if cosine!=0:
         cosine = 1 / cosine
