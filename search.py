@@ -22,6 +22,7 @@ def read_data_structures():
     global document_bodies
     global document_token_list
     global inverted_index
+    global document_weights
 
     with open( 'index_data/titles.data', 'rb') as f:
         titles = pickle.load(f)
@@ -35,6 +36,8 @@ def read_data_structures():
         document_frequencies = pickle.load(f)
     with open( 'index_data/document_token_list.data', 'rb') as f:
         document_token_list = pickle.load(f)
+    with open( 'index_data/document_weights.data', 'rb') as f:
+        document_weights = pickle.load(f)
 
 """ Return all the query terms with the corresponding count
 """
@@ -67,33 +70,6 @@ def get_normalized_query_scores(query_terms):
         tf_idf[term] = tf_idf[term] * cosine    #cosine- normalize the tf_idf scores for each term in the query
     return tf_idf               #returns a dict of terms vs tf_idf scores
 
-""" Generate normalized document scores
-
-Scoring scheme: lnc
-l -> Logarithmic tf
-n -> No idf
-c -> Cosine normalization
-"""
-def get_normalized_doc_weights(query):
-    doc_weights = [[] for i in range(len(document_frequencies))] #list of as many lists as the number of documents
-    # Finding logarithmic tf
-    for i in range(len(document_frequencies)):
-        for term in document_frequencies[i].keys():
-            val = document_frequencies[i][term]
-            doc_weights[i].append([term, 1 + math.log10(val)])
-    # Applying cosine normalization
-    normalized_doc_weights = [[] for i in range(len(doc_weights))]
-    for i in range(len(doc_weights)):
-        doc_tf = doc_weights[i]
-        square_sum = math.sqrt(sum([v[1] ** 2 for v in doc_tf]))
-        if square_sum != 0:
-            factor = 1 / square_sum
-        else:
-            factor = 0
-        for j in range(len(doc_tf)):
-            normalized_doc_weights[i].append([doc_tf[j][0], doc_tf[j][1] * factor])
-    return normalized_doc_weights   #returns a list of [doc_terms, number of occurrences of the term in document]
-
 """ Function that returns the weight of a given term in query
 
 Returns 0 if term not in query
@@ -109,14 +85,12 @@ def get_query_term_weight(term, term_weights):
 Returns a sorted list of documents with their scores in non-increasing order
 """
 def compute_scores(query_wt, document_wt):
-    scores = [[i, 0] for i in range(len(document_wt))]  #list of [rank, score] pairs
+    scores = [[i, 0] for i in range(len(document_wt))]  #list of [index, score] pairs
     for i in range(len(document_wt)):
         doc_tf = document_wt[i]                         #list of term - frequency pairs for one document
         score = 0
         for j in range(len(doc_tf)):                    #looping through the total number of terms of the document
-            term = doc_tf[j][0]
-            term_weight = get_query_term_weight(term, query_wt) #gets query term weight corresponding to each term in the document.
-            score += term_weight * doc_tf[j][1]         #adds product of query and doc weights of the term to the score
+            score += get_query_term_weight(doc_tf[j][0],query_wt) * doc_tf[j][1]         #adds product of query and doc weights of the term to the score
         scores[i] = [i, score]                          #a pair with of an index vs score
     scores = sorted(scores, key=lambda x: x[1], reverse=True)
     return scores
@@ -135,10 +109,9 @@ def search():
 
     # Find query and docuemnt weights
     query_wt = get_normalized_query_scores(query_terms)
-    document_wt = get_normalized_doc_weights(query_terms)
 
     # Find the ranking
-    scores = compute_scores(query_wt, document_wt)
+    scores = compute_scores(query_wt, document_weights)
 
     # Checking if number of results is less than 10
     num = len(titles) if len(titles)<10 else 10

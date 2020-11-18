@@ -20,6 +20,7 @@ def get_data_structures():
     global document_bodies
     global document_token_list
     global inverted_index
+    global document_weights
 
     titles = search.titles
     idnos = search.idnos
@@ -27,6 +28,7 @@ def get_data_structures():
     document_bodies = search.document_bodies
     document_token_list = search.document_token_list
     inverted_index = search.inverted_index
+    document_weights = search.document_weights
 
 
 """Implements a heuristic for checking the spelling of query terms.
@@ -114,12 +116,11 @@ def modified_search():
 
     # Computing the query and document weights
     query_wt = get_normalized_query_scores(query_terms)
-    document_wt = get_normalized_doc_weights(query_terms)
 
     scores = []
 
     # Computing Cosine Scores. An unsorted list is returned here
-    original_scores = compute_scores(query_wt, document_wt)
+    original_scores = compute_scores(query_wt, document_weights)
     scores.append(original_scores)
 
     # Generating a synonym set for each query term
@@ -128,9 +129,8 @@ def modified_search():
     for qs in query_syn_set:
         new_query_terms = Counter(qs)
         new_q_wt = get_normalized_query_scores(new_query_terms)
-        new_d_wt = get_normalized_doc_weights(new_query_terms)
         # Note: The weight of the scores of the synonym sets can be changed. Currently, the weight has been set to 0.2 after repeated evaluation of performance.
-        new_score = compute_scores(new_q_wt, new_d_wt)
+        new_score = compute_scores(new_q_wt, document_weights)
         scores.append(new_score)
 
     # Here modified score = original_score + weight*new_score

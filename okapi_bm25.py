@@ -11,13 +11,15 @@ def get_data_structures_OkapiBM25():
     global document_bodies
     global document_token_list
     global inverted_index
+    global document_weights
 
     titles = search.titles
     idnos = search.idnos
-    document_frequencies = search.document_frequencies 
+    document_frequencies = search.document_frequencies
     document_bodies = search.document_bodies
     document_token_list = search.document_token_list
     inverted_index = search.inverted_index
+    document_weights = search.document_weights
 
 """ Performs a query with the OkapiBM25+ algorithm
 
