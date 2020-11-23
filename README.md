@@ -8,7 +8,7 @@ Assignment for CSF409 Information Retrieval
 |Rahul Ganesh Prabhu|2018A7PS0193P|
 |Harsh Khatri |2017A7PS0055P|
 |Rishav Das |2018A7PS0157P|
-|B. Rishishankar |2018A4PS0549|
+|B. Rishishankar |2018A4PS0549P|
 |Yaganti Sivakrishna|2017A7PS0045P|
 
 ## Instructions to run
