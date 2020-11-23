@@ -8,7 +8,7 @@ Assignment for CSF409 Information Retrieval
 |Rahul Ganesh Prabhu|2018A7PS0193P|
 |Harsh Khatri |2017A7PS0055P|
 |Rishav Das |2018A7PS0157P|
-|B. Rishishankar |XXX|
+|B. Rishishankar |2018A4PS0549|
 |Yaganti Sivakrishna|2017A7PS0045P|
 
 ## Instructions to run
@@ -29,3 +29,5 @@ Part 2 has two sub parts:
 
 1. This can be found in `search_modified.py`. It find the synonym sets of each query term and calculates the score for all the synonyms. A weight is assigned to the score generated from the synonym sets.
 2. This can be found in `okapi_bm25.py`. It uses Okapi BM25+ to find the most relevant documents to the query. It uses the spelling correction implemented in subpart 1 as well.
+
+This code can be found [on GitHub](https://github.com/favre49/CSF409-A1). It will be made public 48 hours after submission.
