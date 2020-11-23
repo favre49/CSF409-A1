@@ -9,7 +9,7 @@ import math
 nltk.download('punkt')
 
 ROOT_DIR = "./data/Wikipedia/AO" # Root directory for input files
-INDEX_DATA_DIR = "./index_data"
+INDEX_DATA_DIR = "./index_data" # Directory for serialized data
 
 """Retrieves documents from a given file
 
@@ -67,7 +67,7 @@ n -> No idf
 c -> Cosine normalization
 """
 def get_normalized_doc_weights(document_frequencies):
-    doc_weights = [{} for i in range(len(document_frequencies))] #list of as many lists as the number of documents
+    doc_weights = [{} for i in range(len(document_frequencies))] #list of as many dicts as the number of documents
     # Finding logarithmic tf
     for i in range(len(document_frequencies)):
         for term in document_frequencies[i].keys():
@@ -93,6 +93,7 @@ The associated data serialized is:
     3. Document bodies
     4. Document token frequencies
     5. Document token list
+    6. Document term weights
 """
 def generate_inverted_index() :
     print("Generating Inverted Index...")
@@ -120,7 +121,7 @@ def generate_inverted_index() :
     # Create inverted index
     inverted_index = create_inverted_index(document_frequencies, idnos)
     
-    # Precompute documetn weights for later use
+    # Precompute document weights for later use
     document_weights = get_normalized_doc_weights(document_frequencies)
 
     # Store since it takes a long time to build

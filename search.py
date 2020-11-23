@@ -67,12 +67,12 @@ def get_normalized_query_scores(query_terms):
     if cosine!=0:
         cosine = 1 / cosine
     for term in tf_idf:
-        tf_idf[term] = tf_idf[term] * cosine    #cosine- normalize the tf_idf scores for each term in the query
-    return tf_idf               #returns a dict of terms vs tf_idf scores
+        tf_idf[term] = tf_idf[term] * cosine    # cosine normalize the tf_idf scores for each term in the query
+    return tf_idf               # returns a dict of terms vs tf_idf scores
 
-""" Function that returns the weight of a given term in query
+""" Function that returns the weight of a given term in document
 
-Returns 0 if term not in query
+Returns weight of term if it is in the dictionary. Else, it returns 0.
 """
 def get_document_term_weight(term, term_weights):
     if term in term_weights.keys():
@@ -106,7 +106,7 @@ def search():
     query_terms = get_query_terms(processed_query)
     print("Query Terms: ", query_terms)
 
-    # Find query and docuemnt weights
+    # Find query and document weights
     query_wt = get_normalized_query_scores(query_terms)
 
     # Find the scores of each document
@@ -120,4 +120,4 @@ def search():
     for i in range(10):
         if i == len(titles):
             break
-        print(str(i) + ". Document " + str(idnos[scores[i][0]]) + ": " + str(titles[scores[i][0]]) + ", Score: " + str(round(scores[i][1], 3)))
+        print(str(i+1) + ". Document " + str(idnos[scores[i][0]]) + ": " + str(titles[scores[i][0]]) + ", Score: " + str(round(scores[i][1], 3)))

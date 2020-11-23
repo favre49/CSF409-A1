@@ -23,7 +23,7 @@ def get_data_structures_OkapiBM25():
 
 """ Performs a query with the OkapiBM25+ algorithm
 
-The hyperparameters of the equation k,b and delta re passed as function
+The hyperparameters of the equation k,b and delta are passed as function
 arguments.
 """
 def query_OkapiBM25(query_terms,k,b,delta):
@@ -70,4 +70,4 @@ def search_OkapiBM25():
     for i in range(10):
         if i == len(titles):
             break
-        print(str(i) + ". Document " + str(idnos[scores[i][0]]) + ": " + str(titles[scores[i][0]]) + ", Score: " + str(round(scores[i][1], 3)))
+        print(str(i+1) + ". Document " + str(idnos[scores[i][0]]) + ": " + str(titles[scores[i][0]]) + ", Score: " + str(round(scores[i][1], 3)))
